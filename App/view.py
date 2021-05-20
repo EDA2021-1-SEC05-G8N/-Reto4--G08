@@ -35,12 +35,21 @@ operación solicitada
 """
 
 def printMenu():
+    print("\n")
+    print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
-
+    print("1- Inicializar Analizador")
+    print("2- Identificar los clústeres de comunicación ")
+    print("3- Identificar los puntos de conexión críticos de la red ")
+    print("4- La ruta de menor distancia:")
+    print("5- Identificar la Infraestructura Crítica de la Red")
+    print("6- Análisis de fallas")
+    print("7- Los mejores canales para transmitir")
+    print("8- La mejor ruta para comunicarme")
+    print("9- Graficando los Grafos")
+    print("0- Salir")
+    print("*******************************************")
 catalog = None
-
 """
 Menu principal
 """
@@ -49,6 +58,8 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        cont = controller.init()
+        controller.loadServices(cont, 'landing_points.csv')
 
     elif int(inputs[0]) == 2:
         pass
