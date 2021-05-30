@@ -59,7 +59,7 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         cont = controller.init()
-        controller.loadServices(cont, 'landing_points.csv')
+        controller.loadServices(cont, 'landing_points.csv', "connections.csv")
 
     elif int(inputs[0]) == 2:
         pass

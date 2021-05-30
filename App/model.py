@@ -50,25 +50,79 @@ def newAnalyzer():
     """
     try:
         analyzer = {
-                    'id': None,
                     'landing_points': None,
+                    'connections': None
                     }
 
-        analyzer['id'] = m.newMap(numelements=14000,
-                                     maptype='PROBING')
+        analyzer['landing_points'] = m.newMap(numelements=14000,
+                                     maptype='PROBING',
+                                     comparefunction=compareIds)
 
-        analyzer['landing_points'] = gr.newGraph(datastructure='ADJ_LIST',
+        analyzer['connections'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=14000,
                                               comparefunction=compareIds)
         return analyzer
+    
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
-    
-# Construccion de modelos
-def addpoint(analyzer, point):
-    m.put(analyzer["id"], point["id"], point)
 
+# Construccion de modelos
+def addLandConnection(analyzer, lastpoint, point, cable):
+    try:
+        origin = formatpoint(lastpoint, cable)
+        destination = formatpoint(point, cable)
+        distance = 1
+        #añadir vertice
+        addpoint(analyzer, origin)
+        addpoint(analyzer, destination)
+        #añadir arcos
+        addconnection(analyzer, origin, destination, distance)
+        #lista cables
+        addCableLand(analyzer, lastpoint)
+        addCableLand(analyzer, point)
+        return analyzer
+    except Exception as exp:
+        error.reraise(exp, "model:addpointconnection")
+
+
+def addpoint(analyzer, point):
+    try:
+        if not gr.containsVertex(analyzer["connections"], point):
+            gr.insertVertex(analyzer["connections"], point)
+        return analyzer
+    except Exception as exp:
+        error.reraise(exp, "model:addpoint")
+
+def addCableLand(analyzer, point):
+    entry = m.get(analyzer["landing_points"], point)
+    if entry is None:
+        lstcables= lt.newList(cmpfunction=comparecables)
+        lt.addLast(lstcables, point["cable_name"])
+        m.put(analyzer["landing_points"], point, lstcables)
+    else:
+            lstcables= entry["value"]
+            info = point["cable_name"]
+            if not lt.isPresent(lstcables, info):
+                lt.addLast(lstcables, info)
+def addCableConnections(analyzer):
+    lstpoints=m.keySet(analyzer["landing_points"])
+    for key in lt.iterator(lstpoints):
+        lstcables = m.get(analyzer["landing_points"], key)["value"]
+        prevout=None
+        for cable in lt.iterator(lstcables):
+            cable = key+ "-"+ cable
+            if prevout is not None:
+                addconnection(analyzer, prevout, cable, 0)
+                addconnection(analyzer, cable, prevout, 0)
+            prevout = cable
+    None
+
+def addconnection(analyzer, origin, destination, distance):
+    edge = gr.getEdge(analyzer["connections"], origin, destination)
+    if edge is None:
+        gr.addEdge(analyzer["connections"], origin, destination, distance)
+    return analyzer
 
 # Funciones para agregar informacion al catalogo
 
@@ -79,13 +133,30 @@ def addpoint(analyzer, point):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento
-def compareIds(id1, id2):
+def compareIds(stop, keyvaluestop):
     """
     Compara dos crimenes
     """
-    if (id1 == id2):
+
+    stopcode = keyvaluestop['key']
+    if (stop == stopcode):
         return 0
-    elif id1 > id2:
+    elif (stop > stopcode):
+        return 1
+    else:
+        return -1
+
+def formatpoint(point, cable):
+    name = point+'-'
+    name = name + cable['cable_name']
+    return name 
+def comparecables(cable1, cable2):
+    """
+    Compara dos rutas
+    """
+    if (cable1 == cable2):
+        return 0
+    elif (cable1 > cable2):
         return 1
     else:
         return -1

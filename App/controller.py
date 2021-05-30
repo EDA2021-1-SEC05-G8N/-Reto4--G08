@@ -40,7 +40,7 @@ def init():
 
 
 # Funciones para la carga de datos
-def loadServices(analyzer, servicesfile):
+def loadServices(analyzer, pointsfile, cablesfile):
     """
     Carga los datos de los archivos CSV en el modelo.
     Se crea un arco entre cada par de estaciones que
@@ -49,11 +49,30 @@ def loadServices(analyzer, servicesfile):
     addRouteConnection crea conexiones entre diferentes rutas
     servidas en una misma estación.
     """
-    servicesfile = cf.data_dir + servicesfile
-    input_file = csv.DictReader(open(servicesfile, encoding="utf-8"),
+    cablesfile = cf.data_dir + cablesfile
+    pointsfile = cf.data_dir + pointsfile
+    input_file_points = csv.DictReader(open(pointsfile, encoding="utf-8"),
                                 delimiter=",")
-    for point in input_file:
-        model.addpoint(analyzer, point)
+    input_file_cables = csv.DictReader(open(cablesfile, encoding="utf-8-sig"),
+                                delimiter=",")
+
+    lastcable = None
+    for cable in input_file_cables:
+        print(cable)
+        if lastcable is not None:
+            samecable = lastcable["cable_name"] == cable["cable_name"]
+            if samecable:
+                cableorigin = cable["origin"]
+                cabledest = cable["destination"]
+                model.addlandconnection(analyzer, cableorigin, cabledest, cable)
+        else:
+            cableorigin = cable["origin"]
+            cabledest = cable["destination"]
+            model.addlandconnection(analyzer, cableorigin, cabledest, cable)
+        lastcable = cable
+    model.addCableConnection(analyzer)
+    return analyzer
+
 
 # Funciones de ordenamiento
 
