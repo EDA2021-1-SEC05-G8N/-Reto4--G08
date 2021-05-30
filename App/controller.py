@@ -64,13 +64,13 @@ def loadServices(analyzer, pointsfile, cablesfile):
             if samecable:
                 cableorigin = cable["origin"]
                 cabledest = cable["destination"]
-                model.addlandconnection(analyzer, cableorigin, cabledest, cable)
+                model.addLandConnection(analyzer, cableorigin, cabledest, cable)
         else:
             cableorigin = cable["origin"]
             cabledest = cable["destination"]
-            model.addlandconnection(analyzer, cableorigin, cabledest, cable)
+            model.addLandConnection(analyzer, cableorigin, cabledest, cable)
         lastcable = cable
-    model.addCableConnection(analyzer)
+    model.addCableConnections(analyzer)
     return analyzer
 
 

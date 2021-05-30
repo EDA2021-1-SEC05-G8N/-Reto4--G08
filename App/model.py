@@ -79,8 +79,8 @@ def addLandConnection(analyzer, lastpoint, point, cable):
         #añadir arcos
         addconnection(analyzer, origin, destination, distance)
         #lista cables
-        addCableLand(analyzer, lastpoint)
-        addCableLand(analyzer, point)
+        addCableLand(analyzer, lastpoint, cable)
+        addCableLand(analyzer, point, cable)
         return analyzer
     except Exception as exp:
         error.reraise(exp, "model:addpointconnection")
@@ -94,15 +94,15 @@ def addpoint(analyzer, point):
     except Exception as exp:
         error.reraise(exp, "model:addpoint")
 
-def addCableLand(analyzer, point):
+def addCableLand(analyzer, point, cable):
     entry = m.get(analyzer["landing_points"], point)
     if entry is None:
         lstcables= lt.newList(cmpfunction=comparecables)
-        lt.addLast(lstcables, point["cable_name"])
+        lt.addLast(lstcables, cable["cable_name"])
         m.put(analyzer["landing_points"], point, lstcables)
     else:
             lstcables= entry["value"]
-            info = point["cable_name"]
+            info = cable["cable_name"]
             if not lt.isPresent(lstcables, info):
                 lt.addLast(lstcables, info)
 def addCableConnections(analyzer):
