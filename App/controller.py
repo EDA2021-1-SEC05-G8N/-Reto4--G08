@@ -55,10 +55,15 @@ def loadServices(analyzer, pointsfile, cablesfile):
                                 delimiter=",")
     input_file_cables = csv.DictReader(open(cablesfile, encoding="utf-8-sig"),
                                 delimiter=",")
+    input_file_paises = csv.DictReader(open(cf.data_dir+"countries.csv", encoding="utf-8"))
+
+    for point in input_file_points:
+        model.addpointtable(analyzer, point)
+    for pais in input_file_paises:
+        model.addpaistable(analyzer, pais)
 
     lastcable = None
     for cable in input_file_cables:
-        print(cable)
         if lastcable is not None:
             samecable = lastcable["cable_name"] == cable["cable_name"]
             if samecable:
@@ -73,7 +78,7 @@ def loadServices(analyzer, pointsfile, cablesfile):
     model.addCableConnections(analyzer)
     return analyzer
 
-
 # Funciones de ordenamiento
-
+def printpaises(analyzer):
+    model.printpaises(analyzer)
 # Funciones de consulta sobre el catálogo

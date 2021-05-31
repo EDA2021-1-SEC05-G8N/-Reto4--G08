@@ -60,7 +60,7 @@ while True:
         print("Cargando información de los archivos ....")
         cont = controller.init()
         controller.loadServices(cont, 'landing_points.csv', "connections.csv")
-
+        controller.printpaises(cont)
     elif int(inputs[0]) == 2:
         pass
 

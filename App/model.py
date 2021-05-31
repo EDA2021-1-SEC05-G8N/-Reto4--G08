@@ -51,7 +51,9 @@ def newAnalyzer():
     try:
         analyzer = {
                     'landing_points': None,
-                    'connections': None
+                    'connections': None,
+                    'points_values': None,
+                    'pais_values': None
                     }
 
         analyzer['landing_points'] = m.newMap(numelements=14000,
@@ -62,12 +64,54 @@ def newAnalyzer():
                                               directed=True,
                                               size=14000,
                                               comparefunction=compareIds)
+        analyzer['points_values'] = m.newMap(numelements=14000,
+                                     maptype='PROBING',
+                                     comparefunction=compareIds)
+        analyzer['pais_values'] = m.newMap(numelements=14000,
+                                     maptype='PROBING',
+                                     comparefunction=compareIds)
+        
         return analyzer
     
     except Exception as exp:
         error.reraise(exp, 'model:newAnalyzer')
 
 # Construccion de modelos
+def addpointtable(analyzer, point):
+    value=pointvalue(point)
+    m.put(analyzer["points_values"], point["landing_point_id"],value)
+
+def pointvalue(point):
+    value = {'id': None, "name": None, "latitude":None, "longitude":None}
+    value['id'] = point["landing_point_id"]
+    value['name'] = point["name"]
+    value["latitude"]=point["latitude"]
+    value["longitude"]=point["longitude"]
+    return value
+
+def addpaistable(analyzer, pais):
+    value=paisvalue(pais, analyzer)
+    m.put(analyzer["pais_values"], pais["CountryName"], value)
+
+def paisvalue(pais, analyzer):
+    value = {'CapitalName': None, "capitalvertex": None, "Population":None, "Internet_users":None}
+    value["CapitalName"] = pais["CapitalName"]
+    value["capitalvertex"]=addpaisvertex(pais, analyzer)
+    value["Population"] = pais["Population"]
+    value["Internet_users"] = pais["Internet users"]
+    return value
+
+def addpaisvertex(pais, analyzer):
+    points=m.valueSet(analyzer['points_values'])
+    capital=pais["CapitalName"]
+    vertex=0
+    for point in lt.iterator(points):
+        ciudad=point["name"].split(",")[0]
+        ciudad=ciudad.strip()
+        if ciudad==capital:
+            vertex=point["id"]
+            return vertex
+
 def addLandConnection(analyzer, lastpoint, point, cable):
     try:
         origin = formatpoint(lastpoint, cable)
@@ -123,7 +167,11 @@ def addconnection(analyzer, origin, destination, distance):
     if edge is None:
         gr.addEdge(analyzer["connections"], origin, destination, distance)
     return analyzer
-
+def printpaises(analyzer):
+    paises=m.valueSet(analyzer["pais_values"])
+    for pais in lt.iterator(paises):
+        print(pais)
+        None
 # Funciones para agregar informacion al catalogo
 
 # Funciones para creacion de datos
