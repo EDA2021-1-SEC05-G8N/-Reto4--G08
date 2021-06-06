@@ -32,6 +32,7 @@ from DISClib.ADT import list as lt
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from math import radians, cos, sin, asin, sqrt
 assert config
 
 """
@@ -53,7 +54,9 @@ def newAnalyzer():
                     'landing_points': None,
                     'connections': None,
                     'points_values': None,
-                    'pais_values': None
+                    'pais_values': None,
+                    'paths': None,
+                    'components': None
                     }
 
         analyzer['landing_points'] = m.newMap(numelements=14000,
@@ -116,7 +119,11 @@ def addLandConnection(analyzer, lastpoint, point, cable):
     try:
         origin = formatpoint(lastpoint, cable)
         destination = formatpoint(point, cable)
-        distance = 1
+        long1=float(m.get(analyzer["points_values"], lastpoint)["value"]["longitude"])
+        lat1=float(m.get(analyzer["points_values"], lastpoint)["value"]["latitude"])
+        long2=float(m.get(analyzer["points_values"], point)["value"]["longitude"])
+        lat2=float(m.get(analyzer["points_values"], point)["value"]["latitude"])
+        distance = haversine(long1, lat1, long2, lat2)
         #añadir vertice
         addpoint(analyzer, origin)
         addpoint(analyzer, destination)
@@ -128,7 +135,21 @@ def addLandConnection(analyzer, lastpoint, point, cable):
         return analyzer
     except Exception as exp:
         error.reraise(exp, "model:addpointconnection")
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
 
 def addpoint(analyzer, point):
     try:
@@ -167,16 +188,50 @@ def addconnection(analyzer, origin, destination, distance):
     if edge is None:
         gr.addEdge(analyzer["connections"], origin, destination, distance)
     return analyzer
+
 def printpaises(analyzer):
     paises=m.valueSet(analyzer["pais_values"])
     for pais in lt.iterator(paises):
-        print(pais)
+        #print(pais)
         None
 # Funciones para agregar informacion al catalogo
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
+
+def connectedComponents(analyzer):
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    return scc.connectedComponents(analyzer['components'])
+
+def vertexComponents(analyzer, verta, vertb):
+    try:
+        connect=scc.stronglyConnected(analyzer['components'], verta, vertb)
+        if connect:
+            return "estan conectados"
+    except:
+        return "NO estan conectados"
+
+
+def servedRoutes(analyzer):
+    lstvert = m.keySet(analyzer["landing_points"])
+    maxvert = None
+    maxdeg = 0
+    for vert in lt.iterator(lstvert):
+        lstroutes = m.get(analyzer["landing_points"], vert)["value"]
+        degree = lt.size(lstroutes)
+        if(degree > maxdeg):
+            maxvert = vert
+            maxdeg = degree
+    return maxvert, maxdeg
+
+def minimumCostPath(analyzer,origin, destination):
+    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], origin)
+    path = djk.pathTo(analyzer['paths'], destination)
+    return path
+
+
+
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 

@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import stack
 assert cf
 
 
@@ -62,7 +63,27 @@ while True:
         controller.loadServices(cont, 'landing_points.csv', "connections.csv")
         controller.printpaises(cont)
     elif int(inputs[0]) == 2:
-        pass
+        verta=input("ingrese el primer vertice: ")
+        vertb=input("ingrese el segundo vertice: ")
+        numero = controller.connectedComponents(cont)
+        connect = controller.vertexComponents(cont, verta, vertb)
+        print("el número de componentes es " + str(numero) + ", los vertices " + connect)
+    elif int(inputs[0]) == 3:
+        maxvert, maxdeg = controller.servedRoutes(cont)
+        print('Vertice: ' + maxvert + '  Total de conecciones: '+ str(maxdeg))
+    
+    elif int(inputs[0]) == 4:
+        origin=input("ingrese el primer vertice: ")
+        destination=input("ingrese el segundo vertice: ")
+        path = controller.minimumCostPath(cont,origin, destination)
+        if path is not None:
+            pathlen = stack.size(path)
+            print('El camino es de longitud: ' + str(pathlen))
+            while (not stack.isEmpty(path)):
+                stop = stack.pop(path)
+                print(stop)
+        else:
+            print('No hay camino')
 
     else:
         sys.exit(0)

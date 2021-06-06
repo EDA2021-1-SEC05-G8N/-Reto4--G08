@@ -82,3 +82,14 @@ def loadServices(analyzer, pointsfile, cablesfile):
 def printpaises(analyzer):
     model.printpaises(analyzer)
 # Funciones de consulta sobre el catálogo
+
+def connectedComponents(analyzer):
+    return model.connectedComponents(analyzer)
+def vertexComponents(analyzer, verta, vertb):
+    return model.vertexComponents(analyzer, verta, vertb)
+
+def servedRoutes(analyzer):
+    return model.servedRoutes(analyzer)
+
+def minimumCostPath(analyzer,origin, destination):
+    return model.minimumCostPath(analyzer,origin, destination)
