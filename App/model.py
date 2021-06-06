@@ -226,8 +226,22 @@ def servedRoutes(analyzer):
     return maxvert, maxdeg
 
 def minimumCostPath(analyzer,origin, destination):
-    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], origin)
-    path = djk.pathTo(analyzer['paths'], destination)
+    capital1=m.get(analyzer["pais_values"], origin)["value"]["capitalvertex"]
+    capitalvertex=m.get(analyzer["landing_points"], capital1)["value"]
+    cable_name=lt.getElement(capitalvertex, 0)
+    capitalpais1=capital1+"-"+cable_name
+    print(capitalpais1)
+
+
+
+    capital2=m.get(analyzer["pais_values"], destination)["value"]["capitalvertex"]
+    capitalvertex2=m.get(analyzer["landing_points"], capital2)["value"]
+    cable_name2=lt.getElement(capitalvertex2, 0)
+    capitalpais2=capital2+"-"+cable_name2
+    print(capitalpais2)
+
+    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], capital1)
+    path = djk.pathTo(analyzer['paths'], capitalpais2)
     return path
 
 

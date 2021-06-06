@@ -73,8 +73,10 @@ while True:
         print('Vertice: ' + maxvert + '  Total de conecciones: '+ str(maxdeg))
     
     elif int(inputs[0]) == 4:
-        origin=input("ingrese el primer vertice: ")
-        destination=input("ingrese el segundo vertice: ")
+        origin=input("ingrese el primer pais: ")
+        paisvertex=0
+        destination=input("ingrese el segundo pais: ")
+        paisvertex2=0
         path = controller.minimumCostPath(cont,origin, destination)
         if path is not None:
             pathlen = stack.size(path)
