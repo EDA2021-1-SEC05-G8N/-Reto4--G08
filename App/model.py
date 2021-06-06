@@ -248,6 +248,19 @@ def minimumCostPath(analyzer,origin, destination):
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+def totalVert(analyzer):
+    """
+    Retorna el total de estaciones (vertices) del grafo
+    """
+    return gr.numVertices(analyzer['connections'])
+
+
+def totalConnections(analyzer):
+    """
+    Retorna el total arcos del grafo
+    """
+    return gr.numEdges(analyzer['connections'])
+
 
 # Funciones de ordenamiento
 def compareIds(stop, keyvaluestop):

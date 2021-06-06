@@ -62,6 +62,8 @@ while True:
         cont = controller.init()
         controller.loadServices(cont, 'landing_points.csv', "connections.csv")
         controller.printpaises(cont)
+        print("numero vertices: "+ str(controller.totalVert(cont)))
+        print("el numero de arcos es: "+ str(controller.totalConnections(cont)))
     elif int(inputs[0]) == 2:
         verta=input("ingrese el primer vertice: ")
         vertb=input("ingrese el segundo vertice: ")
