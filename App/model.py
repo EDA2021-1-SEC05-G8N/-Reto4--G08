@@ -200,16 +200,16 @@ def printpaises(analyzer):
 
 # Funciones de consulta
 
-def connectedComponents(analyzer):
-    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
-    return scc.connectedComponents(analyzer['components'])
-
 def vertexComponents(analyzer, verta, vertb):
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    numero=scc.connectedComponents(analyzer['components'])
     try:
         connect=scc.stronglyConnected(analyzer['components'], verta, vertb)
         if connect:
+            print("el numero de vertices es: " + str(numero))
             return "estan conectados"
     except:
+        print("el numero de vertices es: " + str(numero))
         return "NO estan conectados"
 
 

@@ -65,9 +65,8 @@ while True:
     elif int(inputs[0]) == 2:
         verta=input("ingrese el primer vertice: ")
         vertb=input("ingrese el segundo vertice: ")
-        numero = controller.connectedComponents(cont)
         connect = controller.vertexComponents(cont, verta, vertb)
-        print("el número de componentes es " + str(numero) + ", los vertices " + connect)
+        print("los vertices " + connect)
     elif int(inputs[0]) == 3:
         maxvert, maxdeg = controller.servedRoutes(cont)
         print('Vertice: ' + maxvert + '  Total de conecciones: '+ str(maxdeg))

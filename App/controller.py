@@ -83,8 +83,6 @@ def printpaises(analyzer):
     model.printpaises(analyzer)
 # Funciones de consulta sobre el catálogo
 
-def connectedComponents(analyzer):
-    return model.connectedComponents(analyzer)
 def vertexComponents(analyzer, verta, vertb):
     return model.vertexComponents(analyzer, verta, vertb)
 
