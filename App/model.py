@@ -240,7 +240,7 @@ def minimumCostPath(analyzer,origin, destination):
     capitalpais2=capital2+"-"+cable_name2
     print(capitalpais2)
 
-    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], capital1)
+    analyzer['paths'] = djk.Dijkstra(analyzer['connections'], capitalpais1)
     path = djk.pathTo(analyzer['paths'], capitalpais2)
     return path
 
